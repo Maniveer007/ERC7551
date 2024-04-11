@@ -8,5 +8,14 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ethers": "^6.11.1",
+    "express": "^4.19.2",
+    "prompt-sync": "^4.2.0",
+    "shamir-secret-sharing": "^0.0.3",
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5"
+  }
 }
