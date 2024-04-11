@@ -22,6 +22,7 @@ contract ERC7551Account is IERC7551Account {
     event TransactionExecuted(uint chainid,address from ,address to,uint256 value,bytes data);
 
     constructor(uint _sourcechainID,address _tokenaddress,uint _tokenID,address _owner){
+        // update only owner
         Relayer=msg.sender;
         Token=TokenDetails(_sourcechainID,_tokenaddress,_tokenID);
         Owner= _owner;
