@@ -11,7 +11,7 @@ const runVerifyNode = async () => {
 
     
     const TOTAL_NODES=5;
-    const MIN_NO_NODES_REQUIRED=2;
+    const MIN_NO_NODES_REQUIRED=3;
     
     // Getting getails of Each verifier node
     let NodeIndex = prompt("Enter the index of Node: ");

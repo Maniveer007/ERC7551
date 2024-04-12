@@ -64,6 +64,29 @@ const abi=[
 		"inputs": [
 			{
 				"internalType": "uint256",
+				"name": "DestinationchainID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "Tokenaddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenID",
+				"type": "uint256"
+			}
+		],
+		"name": "CreateCrossChainAccount",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
 				"name": "_sourcechainID",
 				"type": "uint256"
 			},
@@ -88,7 +111,41 @@ const abi=[
 				"type": "uint256"
 			}
 		],
-		"name": "deploy",
+		"name": "account",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_sourcechainID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_tokenaddress",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_salt",
+				"type": "uint256"
+			}
+		],
+		"name": "createAccount",
 		"outputs": [],
 		"stateMutability": "payable",
 		"type": "function"
@@ -121,12 +178,45 @@ const abi=[
 				"type": "uint256"
 			}
 		],
-		"name": "getAddress",
-		"outputs": [
+		"name": "createAccountOnlyRelayer",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_sourcechainID",
+				"type": "uint256"
+			},
 			{
 				"internalType": "address",
-				"name": "",
+				"name": "_tokenaddress",
 				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenID",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_owner",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_salt",
+				"type": "uint256"
+			}
+		],
+		"name": "isAccountCreated",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",

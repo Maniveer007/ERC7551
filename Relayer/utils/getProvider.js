@@ -1,4 +1,5 @@
-
+const ethers=require('ethers')
+require("dotenv").config();
 
 function getProvider(chainid){
     if(chainid==80001){

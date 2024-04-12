@@ -1,5 +1,6 @@
 
-import getProvider from './getProvider'
+const getProvider = require('./getProvider')
+const ethers=require('ethers')
 
 const getOwnerofNFT = async (sourcechainid,tokenaddress,tokenid) => {
 
@@ -31,4 +32,4 @@ const getOwnerofNFT = async (sourcechainid,tokenaddress,tokenid) => {
  
 }
 
-export default getOwnerofNFT
+module.exports= getOwnerofNFT

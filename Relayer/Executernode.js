@@ -3,8 +3,12 @@ const express =require( "express");
 const cors =require( "cors");
 const { createServer } =require( "http");
 const getProvider =require( "./utils/getProvider");
-
+const shamir = require('shamir-secret-sharing');
+const ethers = require('ethers')
 const registryABI = require("./utils/registryABI");
+const getOwnerofNFT = require("./utils/getOwnerofNFT");
+
+
 const port = 5000;
 const app = express();
 const server = new createServer(app);
@@ -16,7 +20,7 @@ const io = new Server(server, {
 app.use(cors());
 
 const TOTAL_NODES=5;
-const MIN_NO_NODES_REQUIRED=2;
+const MIN_NO_NODES_REQUIRED=3;
 
 let map = new Map();
 
@@ -35,7 +39,7 @@ io.on("connection", (socket) => {
       NodeIndex,
     } = data;
 
-    console.log("adadadadadaad");
+    console.log("adydtrutkutuyyukkuytyytfjkhfkjyfkyutjfyutifr jyutfiyukgfukiyfvrukytigfyufvg ut6fuytgv tyftyg vtufvyv uhvyfgvg nyugv");
 
     // console.log(sourceid);
     // console.log(destinationid);
@@ -61,65 +65,66 @@ io.on("connection", (socket) => {
     };
     
     mapkey=JSON.stringify(mapkey);
-    console.log("new ");
+    // console.log("new ");
 
 
 
     
-    console.log("recived data");
+    // console.log("recived data");
 
     // console.log(map.has(mapkey));
     // console.log(mapkey);
 
     if (map.has(mapkey)) {
       console.log("updating");
-      // map.get(mapkey).push(mapvalue);
       map.get(mapkey).push(mapvalue) // Retrieve the existing array directly
-      // console.log("type of",typeof(existingArray));
-      // map.set(mapkey, [...existingArray, mapvalue]);
+     
     } else {
       console.log('new data');
       map.set(mapkey, [mapvalue]);
     }
  
 
-    // Iterate over key-value pairs in the map and log them
-map.forEach((value, key) => {
-  console.log(`Key: ${key}, Value: ${JSON.stringify(value)}, Array Size: ${value.length}`);
-});
+//     // Iterate over key-value pairs in the map and log them
+// map.forEach((value, key) => {
+//   console.log(`Key: ${key}, Value: ${JSON.stringify(value)}, Array Size: ${value.length}`);
+// });
 
+function removeDuplicatesandgetthresholdkey(arr) {
+  const removeddublicates= arr.filter((item,
+      index) => arr.indexOf(item) === index);
+  return removeddublicates.map(val=>{
+    return val.thresholdKey;
+  })
+}
 
+  if(map.get(mapkey).length>MIN_NO_NODES_REQUIRED){
+
+    const uint8arrprivatekey=await combineShares(removeDuplicatesandgetthresholdkey(map.get(mapkey)))
+
+    console.log(uint8ArrayToHex(uint8arrprivatekey));
+
+    const privatekey=uint8ArrayToHex(uint8arrprivatekey);
     
+    const provider=getProvider(destinationid);
 
-    // if (map.has(mapkey)) {
-    //   console.log("updating");
-    //   const existingArray = Array(map.get(mapkey));
-    //   map.set(mapkey, [...existingArray,mapvalue]);
-    // } else {
-    //   map.set(mapkey, [mapvalue]);
-    // }
+    const wallet=new ethers.Wallet(privatekey,provider);
 
-    // const Array=map.get(mapkey);
-    // // map.set(mapkey, [...Array,mapvalue]);
-    // // console.log(Array.length);
-    // // console.log(Array);
-    // if(Array.length>MIN_NO_NODES_REQUIRED){
-    //     const privatekey=await combineShares(map.get(mapkey)) //# threshol keys not object
+    const NFTowner=await getOwnerofNFT(sourceid,tokenaddress,tokenid)
+    
+    console.log(NFTowner);
 
-    //     const provider=getProvider(mapkey.destinationid);
-    //     const Account =new ethers.wallet(privatekey,provider);
+    const contract=new ethers.Contract("0xEE722dE235b9480edB59f0ec9557D2971582E7fF",registryABI,wallet);
 
-    //     const contract=new ethers.Contract("registryaccountaddress",registryABI,Account);
+    const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,223);
+    await tx.wait();
 
-    //     const NFTowner=await getOwnerofNFT(sourceid,mapkey.tokenaddress,mapkey.tokenid)
+    console.log("executed sucessfully");
 
-    //     await contract.createAccountOnlyRelayer(mapkey.sourceid,mapkey.tokenaddress,mapkey.tokenid, NFTowner,5102);
-    //     console.log("account is created");
-    // }
 
-    // for (const [key, value] of map) {
-    //   console.log("map data", key, value);
-    // }
+
+  }
+
     
   });
 
@@ -134,6 +139,9 @@ async function combineShares(shares) {
 
     // Return the reconstructed private key
     return privateKeyHex;
+}
+function uint8ArrayToHex(uint8Array) {
+  return uint8Array.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
 }
 
 server.listen(port, () => console.log(`server is running ${port}`));
