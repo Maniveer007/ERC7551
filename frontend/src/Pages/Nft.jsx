@@ -1,17 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "./nft.css";
 import Card from "../Components/Card";
+import { ethers } from "ethers";
 
 const Nft = () => {
   const [nftList, setNftlist] = useState([]);
+  const [address,setaddress]=useState('');
 
-  const account = "0xfddD2b8D9aaf04FA583CCF604a2De12668200582";
+  const loadData=async()=>{
+
+    const provider=new ethers.BrowserProvider(window.ethereum);
+    const signer=await provider.getSigner()
+    const Address=await signer.getAddress()
+    setaddress(Address);
+  }
+
+  // const account = "0xfddD2b8D9aaf04FA583CCF604a2De12668200582";
 
   const allNFT = () => {
     const options = { method: "GET" };
 
     fetch(
-      `https://eth-sepolia.g.alchemy.com/nft/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk/getNFTs?pageKey=undefined&owner=${account}&pageSize=24&withMetadata=true`,
+      `https://eth-sepolia.g.alchemy.com/nft/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk/getNFTs?pageKey=undefined&owner=${address}&pageSize=24&withMetadata=true`,
       options
     )
       .then((response) => response.json())
@@ -29,8 +39,9 @@ const Nft = () => {
 
   useEffect(() => {
     // contract && allNFT();
+    loadData()
     allNFT();
-  }, []);
+  }, [address]);
 
   return (
     <div className="nft_container">

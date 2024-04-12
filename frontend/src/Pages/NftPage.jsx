@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const NftPage = () => {
   const [nftList, setNftlist] = useState({});
+  const [accountaddress,setaccountaddress]=useState();
   const { address, index } = useParams();
 
   const allNFT = () => {
@@ -25,10 +26,18 @@ const NftPage = () => {
       })
       .catch((err) => console.error(err));
   };
+  const loadData=async()=>{
+    const provider=new ethers.BrowserProvider(window.ethereum);
+    const {chainId}=await provider.getNetwork()
+    console.log(chainId);
+    const contract=new ethers.Contract("0xEE722dE235b9480edB59f0ec9557D2971582E7fF",abi,provider);
+    // const accountAddress=await contract.account(sourid,tokenadd,tokenid,owner,salt)
+  }
 
   useEffect(() => {
     // contract && allNFT();
     allNFT();
+    loadData()
   }, []);
 
   const handleClick1 = () => {
@@ -52,7 +61,7 @@ const NftPage = () => {
         const address = await signer.getAddress();
 
         // setAccount(address);
-        let contractAddress = "0x7e311c97DCD33D10E72fFeFC094a2C0cf3Cd7525";
+        let contractAddress = "0xEE722dE235b9480edB59f0ec9557D2971582E7fF";
         // let contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
 
         const contract = new ethers.Contract(contractAddress, abi, signer);
