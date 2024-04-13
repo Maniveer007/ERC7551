@@ -5,7 +5,7 @@ const prompt = require("prompt-sync")({ sigint: true });
 const { getsharedkey } = require("./utils/getsharedkey");
 const relayerABI = require("./utils/relayerABI");
 const ethers = require("ethers");
-const { default: sendCreateAccountRequest } = require("./utils/sendCreateAccountRequest");
+
 
 const runVerifyNode = async () => {
 
@@ -21,10 +21,13 @@ const runVerifyNode = async () => {
     
     
     // Initialize contract address and ABI
-    const RelayercontractAddress = "0x913bABf454A57f72f7Adc03117379aE3d1194bCE";
+    const RelayercontractAddress = "0xF1AD184b28574Ee5acC065251ef36726192a8836";
 
-    const MumbaiproviderURL = `https://polygon-mumbai.g.alchemy.com/v2/${process.env.MUMBAI_API_KEY}`;
-    const Mumbaiprovider = new ethers.JsonRpcProvider(MumbaiproviderURL);
+    // const MumbaiproviderURL = `https://polygon-mumbai.g.alchemy.com/v2/${process.env.MUMBAI_API_KEY}`;
+    // const Mumbaiprovider = new ethers.JsonRpcProvider(MumbaiproviderURL);
+
+    const BasesepoliaproviderURL = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_API_KEY}`;
+    const Basesepoliaprovider = new ethers.JsonRpcProvider(BasesepoliaproviderURL);
     
     const opSepoliaproviderURL=`https://opt-sepolia.g.alchemy.com/v2/${process.env.OPSEPOLIA_API_KEY}`
     const opSepoliaprovider = new ethers.JsonRpcProvider(opSepoliaproviderURL);
@@ -33,14 +36,32 @@ const runVerifyNode = async () => {
     const Sepoliaprovider = new ethers.JsonRpcProvider(SepoliaproviderURL);
 
     
-    const mumbaiRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, Mumbaiprovider);
+    // const mumbaiRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, Mumbaiprovider);
+    const baseSepoliaRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, Basesepoliaprovider);
     const opSepoliaRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, opSepoliaprovider);
     const sepoliaRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, Sepoliaprovider);
     
     
     // Define event handler
     
-    mumbaiRelayerContract.on(
+//     mumbaiRelayerContract.on(
+//         "CreateAccount",(sourceid, destinationid, owneradderss, tokenaddress, tokenid) => {
+//             console.log(`createAccount event Trigered from sourcechain:${sourceid}`);
+    
+//             const data = {
+//                 sourceid: Number(sourceid),
+//                 destinationid: Number(destinationid),
+//                 owneradderss,
+//                 tokenaddress,
+//                 tokenid:Number(tokenid),
+//                 thresholdKey,
+//                 NodeIndex,
+//             };
+            
+//             socket.emit("CreateAccount",data);
+// });
+
+    baseSepoliaRelayerContract.on(
         "CreateAccount",(sourceid, destinationid, owneradderss, tokenaddress, tokenid) => {
             console.log(`createAccount event Trigered from sourcechain:${sourceid}`);
     
@@ -90,7 +111,6 @@ sepoliaRelayerContract.on(
             };
             
             socket.emit("CreateAccount",data);
-          
 });
 
 
