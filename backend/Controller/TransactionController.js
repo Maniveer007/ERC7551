@@ -1,6 +1,8 @@
 // controllers/transactionController.js
 
 const Transaction = require("../model/Transaction");
+const Account = require("../model/Account");
+
 require("dotenv").config();
 
 // GET all transactions
@@ -12,6 +14,17 @@ const getAllTransactions = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+// GET all account
+const getAllAddress = async (req, res) => {
+  try {
+    const account = await Account.find();
+    res.json(account);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 
 // GET a single transaction by ID
 const getTransactionById = async (req, res) => {
@@ -82,6 +95,18 @@ const createTransaction = async (req, res) => {
   }
 };
 
+
+// POST a new account
+const createAccount = async (req, res) => {
+  try {
+    const newAccount = new Account(req.body);
+    await newAccount.save();
+    res.status(201).json(newAccount);
+  } catch (error) {
+    res.status(400).json({ error: "Invalid data" });
+  }
+};
+
 // PUT (update) a transaction by ID
 const updateTransaction = async (req, res) => {
   try {
@@ -118,5 +143,7 @@ module.exports = {
   createTransaction,
   updateTransaction,
   deleteTransaction,
+  createAccount,
+  getAllAddress
   // getsharedkey
 };
