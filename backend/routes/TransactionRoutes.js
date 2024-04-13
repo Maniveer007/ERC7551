@@ -6,6 +6,8 @@ router.get("/", transactionController.getAllTransactions);
 
 router.get("/:id", transactionController.getTransactionById);
 
+// router.get("/thresholdkey/:index", transactionController.getsharedkey);
+
 router.post("/", transactionController.createTransaction);
 
 router.put("/:id", transactionController.updateTransaction);

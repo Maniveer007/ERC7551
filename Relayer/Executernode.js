@@ -7,6 +7,7 @@ const shamir = require('shamir-secret-sharing');
 const ethers = require('ethers')
 const registryABI = require("./utils/registryABI");
 const getOwnerofNFT = require("./utils/getOwnerofNFT");
+const axios = require('axios');
 
 
 const port = 5000;
@@ -115,12 +116,43 @@ function removeDuplicatesandgetthresholdkey(arr) {
     console.log(NFTowner);
 
     const contract=new ethers.Contract("0xEE722dE235b9480edB59f0ec9557D2971582E7fF",registryABI,wallet);
+    
+    
+    try {
+      const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,12);
+      console.log('tx value',tx?.hash);
 
-    const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,223);
-    await tx.wait();
+      const postData = async ()=>{
+        try {
+          const data = {
+            txHash:tx?.hash,
+            method:"create Account",
+            source:sourceid,
+            destination:destinationid,
+          }
+          const res=await axios.post('http://localhost:3000/transactions/',data);
+          console.log('data in postdata',res.data);
+        } catch (error) {
+          console.log('error in postdata',error);
+        }
+      }
+      
+  
+  
+      await tx.wait();
+      tx&&postData();
+  
+      console.log("executed sucessfully");
+  
+    } catch (error) {
+      console.log('error in getting tx',error);
+    }
 
-    console.log("executed sucessfully");
 
+ 
+     
+
+    
 
 
   }

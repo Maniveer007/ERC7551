@@ -12,24 +12,24 @@ const transactionSchema = new mongoose.Schema({
     required: true,
   },
   source: {
-    name: {
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
+    // address: {
       type: String,
       required: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
+    // },
   },
   destination: {
-    name: {
+    // name: {
+    //   type: String,
+    //   required: true,
+    // },
+    // address: {
       type: String,
       required: true,
-    },
-    address: {
-      type: String,
-      required: true,
-    },
+    // },
   },
   status: {
     type: Number,
