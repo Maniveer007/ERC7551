@@ -6,12 +6,15 @@ import { ethers } from "ethers";
 const Nft = () => {
   const [nftList, setNftlist] = useState([]);
   const [address,setaddress]=useState('');
+  const [chainid,setchainid]=useState();
 
   const loadData=async()=>{
 
     const provider=new ethers.BrowserProvider(window.ethereum);
-    const signer=await provider.getSigner()
-    const Address=await signer.getAddress()
+    const signer=await provider.getSigner();
+    const Address=await signer.getAddress();
+    const {chainId}=await provider.getNetwork();
+    setchainid(chainId);
     setaddress(Address);
   }
 
@@ -19,18 +22,46 @@ const Nft = () => {
 
   const allNFT = () => {
     const options = { method: "GET" };
-
-    fetch(
-      `https://eth-sepolia.g.alchemy.com/nft/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk/getNFTs?pageKey=undefined&owner=${address}&pageSize=24&withMetadata=true`,
-      options
-    )
-      .then((response) => response.json())
-      .then((response) => {
-        setNftlist(response.ownedNfts);
-        console.log(response.ownedNfts);
-      })
-      .catch((err) => console.error(err));
-  };
+    if(chainid==84532) { //basesepolia
+      fetch(
+        `https://base-sepolia.g.alchemy.com/nft/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk/getNFTs?pageKey=undefined&owner=${address}&pageSize=24&withMetadata=true`,
+        options
+      )
+        .then((response) => response.json())
+        .then((response) => {
+          setNftlist(response.ownedNfts);
+          console.log(response.ownedNfts);
+        })
+        .catch((err) => console.error(err));
+    
+    }
+    else if(chainid==11155111){ // sepolia
+      fetch(
+        `https://eth-sepolia.g.alchemy.com/nft/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk/getNFTs?pageKey=undefined&owner=${address}&pageSize=24&withMetadata=true`,
+        options
+      )
+        .then((response) => response.json())
+        .then((response) => {
+          setNftlist(response.ownedNfts);
+          console.log(response.ownedNfts);
+        })
+        .catch((err) => console.error(err));
+    
+    }
+    else if(chainid==11155420){ // optimisum sepolia
+      fetch(
+        `https://opt-sepolia.g.alchemy.com/nft/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk/getNFTs?pageKey=undefined&owner=${address}&pageSize=24&withMetadata=true`,
+        options
+      )
+        .then((response) => response.json())
+        .then((response) => {
+          setNftlist(response.ownedNfts);
+          console.log(response.ownedNfts);
+        })
+        .catch((err) => console.error(err));
+    }
+  }
+    
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(account);
@@ -39,8 +70,9 @@ const Nft = () => {
 
   useEffect(() => {
     // contract && allNFT();
-    loadData()
-    allNFT();
+    loadData().then(()=>{
+      allNFT();
+    })
   }, [address]);
 
   return (
@@ -48,7 +80,7 @@ const Nft = () => {
       <div className="nft_container_upper">
         <div className="nft_container_upper_titile">My NFTs</div>
         <div className="nft_container_upper_add" onClick={copyToClipboard}>
-          0xfddD..022{" "}
+          {address}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             xmlns:xlink="http://www.w3.org/1999/xlink"
