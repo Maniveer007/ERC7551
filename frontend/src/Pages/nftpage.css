@@ -82,3 +82,46 @@
 
   /* linear-gradient(to right, #6c55f9, #9d55f9) 1; */
 }
+
+.nftpage_container_right_body{
+  margin-top: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+
+.selected {
+  /* Add your class styles here */
+  /* For example: */
+  border-radius: 10px;
+  background: linear-gradient(to right, #6C55F9, #9D55F9);
+  padding: 10px 20px;
+  font-weight: 600;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: white;
+  cursor: pointer;
+  transition: transform 0.3s, filter 0.3s;
+}
+
+.selected:hover {
+  transform: scale(1.05);
+  filter: hue-rotate(15deg);
+}
+
+.non-selected {
+  border: 2px solid #6c55f9;
+  color: #6c55f9;
+  font-weight: 600;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  transition: transform 0.3s;
+}
+
+.non-selected:hover {
+  transform: scale(1.05);
+}
