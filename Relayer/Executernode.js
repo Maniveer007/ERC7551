@@ -27,7 +27,25 @@ let map = new Map();
 
 io.on("connection", (socket) => {
   console.log(socket.id);
- 
+
+
+  //post data in node
+  const postDataNode = async ()=>{
+    try {
+      const postDataInbackend={
+        socketId:socket.id,
+        // nodeIndex:NodeIndex
+      }
+      const res=await axios.post('http://localhost:3000/node/',postDataInbackend);
+      console.log('data in postDataNode',res.data);
+    } catch (error) {
+      console.log('error in postDataNode',error);
+    }
+  }
+
+  postDataNode();
+
+
   socket.on("CreateAccount", async (data) => {
 
     const {
@@ -39,6 +57,13 @@ io.on("connection", (socket) => {
       thresholdKey,
       NodeIndex,
     } = data;
+
+
+    
+
+
+
+
 
     console.log("adydtrutkutuyyukkuytyytfjkhfkjyfkyutjfyutifr jyutfiyukgfukiyfvrukytigfyufvg ut6fuytgv tyftyg vtufvyv uhvyfgvg nyugv");
 
@@ -119,6 +144,7 @@ function removeDuplicatesandgetthresholdkey(arr) {
     
     
     try {
+      const accountAddress=await contract.account(sourceid,tokenaddress,tokenid,NFTowner,123);
       const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,12);
       console.log('tx value',tx?.hash);
 
@@ -136,11 +162,29 @@ function removeDuplicatesandgetthresholdkey(arr) {
           console.log('error in postdata',error);
         }
       }
+
+
+      const postAccountDetail = async ()=>{
+        try {
+          const data = {
+            address:accountAddress,
+            source:sourceid,
+            destination:destinationid,
+            tokenAddress:tokenaddress,
+            tokenId:tokenid
+          }
+          const res=await axios.post('http://localhost:3000/account/',data);
+          console.log('data in postAccountDetail',res.data);
+        } catch (error) {
+          console.log('error in postAccountDetail',error);
+        }
+      }
       
   
   
       await tx.wait();
       tx&&postData();
+      tx&&postAccountDetail();
   
       console.log("executed sucessfully");
   
@@ -156,6 +200,29 @@ function removeDuplicatesandgetthresholdkey(arr) {
 
 
   }
+
+    
+  });
+
+
+
+
+
+  
+  socket.on('disconnect', () => {
+    console.log('User disconnected with ID:', socket.id);
+    io.emit('user disconnected', socket.id); // Emit user disconnected event with ID
+
+    const delDataNode = async ()=>{
+      try {
+        const res=await axios.delete(`http://localhost:3000/node/${socket.id}`);
+        console.log('del in postDataNode',res.data);
+      } catch (error) {
+        console.log('error in postDataNode',error);
+      }
+    }
+
+    delDataNode();
 
     
   });

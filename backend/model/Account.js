@@ -1,15 +1,16 @@
+// models/Transaction.js
 
 const mongoose = require("mongoose");
 
-const transactionSchema = new mongoose.Schema({
-  txHash: {
+const accountSchema = new mongoose.Schema({
+  address: {
     type: String,
     required: true,
   },
-  method: {
-    type: String,
-    required: true,
-  },
+//   method: {
+//     type: String,
+//     required: true,
+//   },
   source: {
     // name: {
     //   type: String,
@@ -30,9 +31,13 @@ const transactionSchema = new mongoose.Schema({
       required: true,
     // },
   },
-  status: {
+  tokenAddress:{
+    type: String,
+    required: true,
+  },
+  tokenId:{
     type: Number,
-    default: 0,
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -40,6 +45,6 @@ const transactionSchema = new mongoose.Schema({
   },
 });
 
-const Transaction = mongoose.model("Transaction", transactionSchema);
+const Account = mongoose.model("Account", accountSchema);
 
-module.exports = Transaction;
+module.exports = Account;
