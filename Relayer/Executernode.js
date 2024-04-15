@@ -6,6 +6,7 @@ const getProvider =require( "./utils/getProvider");
 const shamir = require('shamir-secret-sharing');
 const ethers = require('ethers')
 const registryABI = require("./utils/registryABI");
+const Accountabi=require('./utils/Accountabi')
 const getOwnerofNFT = require("./utils/getOwnerofNFT");
 const axios = require('axios');
 
@@ -24,6 +25,26 @@ const TOTAL_NODES=5;
 const MIN_NO_NODES_REQUIRED=3;
 
 let map = new Map();
+
+function getthresholdkey(arr) {
+ 
+  return arr.map(val=>{
+    return val.thresholdKey;
+  })
+}
+
+function removeDuplicateUint8Arrays(arrays) {
+  const set = new Set();
+
+  return arrays.filter((array) => {
+      const stringRepresentation = array.toString();
+      if (set.has(stringRepresentation)) {
+          return false; // Duplicate found
+      }
+      set.add(stringRepresentation);
+      return true; // Unique array
+  });
+}
 
 io.on("connection", (socket) => {
   console.log(socket.id);
@@ -59,22 +80,8 @@ io.on("connection", (socket) => {
     } = data;
 
 
-    
-
-
-
-
-
-    console.log("adydtrutkutuyyukkuytyytfjkhfkjyfkyutjfyutifr jyutfiyukgfukiyfvrukytigfyufvg ut6fuytgv tyftyg vtufvyv uhvyfgvg nyugv");
-
-    // console.log(sourceid);
-    // console.log(destinationid);
-    // console.log(owneradderss);
-    // console.log(tokenaddress);
     let uint8Array = new Uint8Array(thresholdKey);
-    // console.log(uint8Array);
-    // console.log(NodeIndex);
-    
+
     let mapkey = {
       sourceid,
       destinationid,
@@ -83,23 +90,12 @@ io.on("connection", (socket) => {
       tokenid
     };
 
-    
-
     const mapvalue = {
       thresholdKey: uint8Array,
       NodeIndex: NodeIndex,
     };
     
     mapkey=JSON.stringify(mapkey);
-    // console.log("new ");
-
-
-
-    
-    // console.log("recived data");
-
-    // console.log(map.has(mapkey));
-    // console.log(mapkey);
 
     if (map.has(mapkey)) {
       console.log("updating");
@@ -111,41 +107,33 @@ io.on("connection", (socket) => {
     }
  
 
-//     // Iterate over key-value pairs in the map and log them
-// map.forEach((value, key) => {
-//   console.log(`Key: ${key}, Value: ${JSON.stringify(value)}, Array Size: ${value.length}`);
-// });
 
-function removeDuplicatesandgetthresholdkey(arr) {
-  const removeddublicates= arr.filter((item,
-      index) => arr.indexOf(item) === index);
-  return removeddublicates.map(val=>{
-    return val.thresholdKey;
-  })
-}
 
-  if(map.get(mapkey).length>MIN_NO_NODES_REQUIRED){
 
-    const uint8arrprivatekey=await combineShares(removeDuplicatesandgetthresholdkey(map.get(mapkey)))
 
-    console.log(uint8ArrayToHex(uint8arrprivatekey));
 
-    const privatekey=uint8ArrayToHex(uint8arrprivatekey);
-    
+
+  shares=removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
+
+  if(shares.length>MIN_NO_NODES_REQUIRED){
+        
+    try {
+    const uint8arrprivatekey=await combineShares(shares)
+
+
+    const privateKey=uint8ArrayToHex(uint8arrprivatekey);
+
     const provider=getProvider(destinationid);
-
-    const wallet=new ethers.Wallet(privatekey,provider);
-
+    const wallet=new ethers.Wallet(privateKey,provider);
     const NFTowner=await getOwnerofNFT(sourceid,tokenaddress,tokenid)
     
     console.log(NFTowner);
 
-    const contract=new ethers.Contract("0xEE722dE235b9480edB59f0ec9557D2971582E7fF",registryABI,wallet);
+    const contract=new ethers.Contract("0xdE61e5145843bAaE74D787d638a6aBB53ff9cD3e",registryABI,wallet);
     
-    
-    try {
-      const accountAddress=await contract.account(sourceid,tokenaddress,tokenid,NFTowner,123);
-      const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,12);
+
+      const accountAddress=await contract.account(sourceid,tokenaddress,tokenid,NFTowner,555);
+      const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,555);
       console.log('tx value',tx?.hash);
 
       const postData = async ()=>{
@@ -192,17 +180,70 @@ function removeDuplicatesandgetthresholdkey(arr) {
       console.log('error in getting tx',error);
     }
 
-
- 
-     
-
-    
-
-
   }
 
     
   });
+
+  socket.on("Transfer",async(data)=>{
+    const {
+      accountAddress,
+      sourceid,
+      destinationid,
+      newowner,
+      thresholdKey,
+      NodeIndex,
+  }=data
+
+  let mapkey={
+    accountAddress,
+      sourceid,
+      destinationid,
+      newowner,
+  }
+  const mapvalue={
+    thresholdKey,
+    NodeIndex
+  }
+
+  mapkey=JSON.stringify(mapkey);
+
+  if (map.has(mapkey)) {
+    console.log("updating");
+    map.get(mapkey).push(mapvalue) // Retrieve the existing array directly
+   
+  } else {
+    console.log('new data');
+    map.set(mapkey, [mapvalue]);
+  }
+
+  
+  shares=removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
+
+  if(shares.length>MIN_NO_NODES_REQUIRED){
+        
+    try {
+      // console.log(removeDuplicates(getthresholdkey(map.get(mapkey))));
+    const uint8arrprivatekey=await combineShares(shares)
+
+
+    const privateKey=uint8ArrayToHex(uint8arrprivatekey);
+
+    const provider=getProvider(destinationid);
+    const wallet=new ethers.Wallet(privateKey,provider);
+   
+
+    const contract=new ethers.Contract(accountAddress,Accountabi,wallet);
+    await contract.changeOwner(newowner);
+
+    console.log('Transfered Sucessfully');
+
+    }catch(e){
+      console.log(e);
+    }
+  }
+
+  })
 
 
 

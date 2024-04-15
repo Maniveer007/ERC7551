@@ -4,7 +4,10 @@ const socket = io("http://localhost:5000/");
 const prompt = require("prompt-sync")({ sigint: true });
 const { getsharedkey } = require("./utils/getsharedkey");
 const relayerABI = require("./utils/relayerABI");
+const ERCabi = require("./utils/ERC721TransferABI");
 const ethers = require("ethers");
+const { default: axios } = require("axios");
+const getProvider = require("./utils/getProvider");
 
 
 const runVerifyNode = async () => {
@@ -34,6 +37,8 @@ const runVerifyNode = async () => {
     
     const SepoliaproviderURL=`https://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`
     const Sepoliaprovider = new ethers.JsonRpcProvider(SepoliaproviderURL);
+
+    console.log(Sepoliaprovider);
 
     
     // const mumbaiRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, Mumbaiprovider);
@@ -112,6 +117,34 @@ sepoliaRelayerContract.on(
             
             socket.emit("CreateAccount",data);
 });
+
+const accounts=await axios.get('http://localhost:3000/account')
+const Tokens=accounts.data;
+console.log(Tokens);
+
+Tokens.map((token)=>{
+    const provider=getProvider(Number(token.source))
+    // console.log(token.tokenAddress);
+    const contract=new ethers.Contract(token.tokenAddress,ERCabi,provider);
+    
+    // console.log("ywsgfyugyushgfiyeh");
+    contract.on("Transfer",(from ,to,tokenindex)=>{
+        if(tokenindex==token.tokenId){
+
+            const data={
+                accountAddress:token.account,
+                sourceid:token.source,
+                destinationid:token.destination,
+                newowner:to,
+                thresholdKey,
+                NodeIndex,
+            }
+            console.log(`Transfer of owner of Account :${token.account} detucted`);
+            socket.emit("Transfer",data);
+        }
+    })
+
+})
 
 
 };

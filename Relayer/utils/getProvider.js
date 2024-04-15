@@ -2,6 +2,13 @@ const ethers=require('ethers')
 require("dotenv").config();
 
 function getProvider(chainid){
+    if(chainid==84532){
+    const BasesepoliaproviderURL = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_API_KEY}`;
+    const Basesepoliaprovider = new ethers.JsonRpcProvider(BasesepoliaproviderURL);
+
+    return Basesepoliaprovider
+}
+// else
 //     if(chainid==80001){
 //     const MumbaiproviderURL = `https://polygon-mumbai.g.alchemy.com/v2/${process.env.MUMBAI_API_KEY}`;
 //     const Mumbaiprovider = new ethers.JsonRpcProvider(MumbaiproviderURL);
