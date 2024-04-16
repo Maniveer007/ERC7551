@@ -17,6 +17,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import { useNavigate } from "react-router-dom";
 
 // const DataDisplay = ({ data }) => {
 //   return (
@@ -48,6 +49,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const NftPage = () => {
+  const navigate = useNavigate();
   const [nftList, setNftlist] = useState([]);
   const [TBAaddress, setTBAaddress] = useState();
   // const [owneraddress, setowneraddress] = useState();
@@ -287,6 +289,8 @@ const NftPage = () => {
     });
   };
 
+  const openSeaURL = `https://testnets.opensea.io/assets/sepolia/0xA1436b27e514DCD0ab633b9626FC730f5fbCCd2e/${address}/${index}`;
+
   return (
     <>
       <div className="nftpage_container">
@@ -299,8 +303,9 @@ const NftPage = () => {
 
           <div className="nftpage_container_left_detail">
             <p>{nftList?.title}</p>
-
-            <img src="https://tokenbound.org/_next/image?url=%2Fopensea.svg&w=32&q=75"></img>
+            <a href={openSeaURL}>
+              <img src="https://tokenbound.org/_next/image?url=%2Fopensea.svg&w=32&q=75"></img>
+            </a>
           </div>
         </div>
         <div className="nftpage_container_right">
