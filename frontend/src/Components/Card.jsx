@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 // import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import img1 from "../assets/img2.jpg";
 import "./card.css";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Card = ({ name, index, address, img }) => {
   const navigate = useNavigate();
@@ -15,7 +17,9 @@ const Card = ({ name, index, address, img }) => {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(address);
-    alert(address);
+    toast.success(`Copied ${address?.slice(0, 10)}...`, {
+      position: "bottom-right",
+    });
   };
 
   return (
@@ -36,7 +40,8 @@ const Card = ({ name, index, address, img }) => {
             className="card_container_body_lower_add"
             onClick={copyToClipboard}
           >
-            0x2b...6D5cbF{" "}
+            {address?.slice(0, 7)}...
+            {address?.slice(address.length - 4, address.length)}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               xmlns:xlink="http://www.w3.org/1999/xlink"

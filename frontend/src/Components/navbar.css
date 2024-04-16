@@ -4,7 +4,7 @@
   align-items: center;
   padding: 1.1rem 6rem;
   background-color: transparent;
-  /* background-color: #fff9f7; */
+  /* background-color: #a3abbd; */
 }
 
 .gpt3__navbar-links {
@@ -64,6 +64,22 @@ a {
 
   margin: 0 1rem;
   cursor: pointer;
+}
+
+.navbar_my_nft_button {
+  background-color: black;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  color: white;
+  padding: 7px 15px;
+  font-weight: 600;
+  border-radius: 6px;
+}
+.navbar_my_nft_button svg {
+  height: 18px;
 }
 
 /* .gpt3__navbar-sign button,

@@ -1,6 +1,6 @@
 import React from "react";
 
-const Home = () => {
+const Temp = () => {
   return (
     <div>
       <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-24">
@@ -35,19 +35,18 @@ const Home = () => {
             <div className="md:w-[80%] pt-12 md:pt-0 px-4 md:px-0">
               <div className="hidden md:block">
                 <div className="text-2xl md:text-3xl font-sans font-semibold">
-                  ERC-7551 unlocks potential for cross chain token bounded
-                  account.
+                  ERC-6551 brings your NFTs to
                 </div>
-                {/* <div className="text-2xl md:text-3xl font-sans font-semibold">
+                <div className="text-2xl md:text-3xl font-sans font-semibold">
                   life with
                   <span className="text-gradient-purple">
                     token bound accounts
                   </span>
-                </div> */}
+                </div>
               </div>
               <div className="md:hidden">
                 <div className="text-2xl md:text-3xl font-sans font-semibold">
-                  ERC-7551 brings your NFTs to life with
+                  ERC-6551 brings your NFTs to life with
                   <span className="text-gradient-purple">
                     token bound accounts
                   </span>
@@ -213,7 +212,7 @@ const Home = () => {
         </div>
       </div> */}
 
-      {/* <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-24 mt-8">
+      <div class="mx-auto max-w-[1800px] px-4 sm:px-6 lg:px-24">
         <section>
           <div
             class="w-full p-4 mt-16 bg-center bg-cover rounded-xl md:p-12 md:mt-0"
@@ -295,9 +294,9 @@ const Home = () => {
             </div>
           </div>
         </section>
-      </div> */}
+      </div>
     </div>
   );
 };
 
-export default Home;
+export default Temp;

@@ -18,14 +18,14 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
-const DataDisplay = ({ data }) => {
-  return (
-    <div>
-      <h2>Data Display Component</h2>
-      <p>{data}</p>
-    </div>
-  );
-};
+// const DataDisplay = ({ data }) => {
+//   return (
+//     <div>
+//       <h2>Data Display Component</h2>
+//       <p>{data}</p>
+//     </div>
+//   );
+// };
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -48,11 +48,13 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const NftPage = () => {
-  const [nftList, setNftlist] = useState({});
+  const [nftList, setNftlist] = useState([]);
   const [TBAaddress, setTBAaddress] = useState();
   // const [owneraddress, setowneraddress] = useState();
   // const [chainid, setchainid] = useState();
   const { address, index } = useParams();
+  const [Contract, setContract] = useState();
+  const [chainid, setchainid] = useState();
   const [selectedDiv, setSelectedDiv] = useState("div1");
   const [isSepolia, setIsSepolia] = useState(false);
   const [isBase, setIsBase] = useState(false);
@@ -81,10 +83,12 @@ const NftPage = () => {
     const signer = await provider.getSigner();
     const ownerAddress = await signer.getAddress();
     const contract = new ethers.Contract(
-      "0xA529C0a819763aa30b78A72db400cD8a0Ec07482",
+      "0xA68736d237e5bD7fF2785B823EbA37ffE8E2DB82",
       registryabi,
       signer
     );
+    setContract(contract);
+    setchainid(chainId);
 
     if (chainId == 84532) {
       //basesepolia
@@ -164,7 +168,7 @@ const NftPage = () => {
     // console.log(accountAddress);
   };
 
-  const loadDetails = async () => {
+  const loadDetails = async (address, urlnetwork) => {
     const data = {
       jsonrpc: "2.0",
       method: "alchemy_getAssetTransfers",
@@ -179,7 +183,7 @@ const NftPage = () => {
       ],
     };
     const response = await axios.post(
-      `https://eth-sepolia.g.alchemy.com/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk`,
+      `https://${urlnetwork}.g.alchemy.com/v2/6ToPbDTF5nhiVtF7Zb1eE4fTdZ2_Wrkk`,
       data
     );
     setDetail(response?.data?.result?.transfers);
@@ -187,8 +191,9 @@ const NftPage = () => {
   };
 
   useEffect(() => {
-    loadData();
-    loadDetails();
+    loadData().then(() => {
+      loadDetails(TBAaddress, "eth-sepolia");
+    });
   }, []);
 
   const divData = {
@@ -197,14 +202,81 @@ const NftPage = () => {
     div3: "Data for Div 3",
   };
 
-  const handleClick = (divId) => {
-    setSelectedDiv(divId);
+  const handleClickBase = async () => {
+    setSelectedDiv("div2");
+    console.log(chainid);
+    if (!isBase) {
+      if (chainid == 84532) {
+        const tx = await Contract.createAccount(
+          84532,
+          nftList.contract.address,
+          nftList.id.tokenId,
+          0
+        );
+        await tx.wait();
+        console.log("deployed on sepolia");
+      } else {
+        console.log(84532, nftList.contract.address, nftList.id.tokenId);
+        const tx = await Contract.CreateCrossChainAccount(
+          84532,
+          nftList.contract.address,
+          nftList.id.tokenId
+        );
+        await tx.wait();
+      }
+    } else {
+      loadDetails(TBAaddress, "base-sepolia");
+    }
   };
 
-  const handleClickSepolia = () => {
+  const handleClickSepolia = async () => {
     setSelectedDiv("div1");
     if (!isSepolia) {
-      console.log("deployed on sepolia");
+      // const contract=new ethers.Contract("")
+      if (chainid == 11155111) {
+        const tx = await Contract.createAccount(
+          11155111,
+          nftList.contract.address,
+          nftList.id.tokenId,
+          0
+        );
+        await tx.wait();
+        console.log("deployed on sepolia");
+      } else {
+        const tx = await Contract.CreateCrossChainAccount(
+          11155111,
+          nftList.contract.address,
+          nftList.id.tokenId
+        );
+        await tx.wait();
+      }
+    } else {
+      loadDetails(TBAaddress, "eth-sepolia");
+    }
+  };
+
+  const handleClickOptimisum = async () => {
+    setSelectedDiv("div3");
+    if (!isBase) {
+      if (chainid == 11155420) {
+        const tx = await Contract.createAccount(
+          11155420,
+          nftList.contract.address,
+          nftList.id.tokenId,
+          0
+        );
+        await tx.wait();
+        console.log("deployed on sepolia");
+      } else {
+        const tx = await Contract.CreateCrossChainAccount(
+          11155420,
+          nftList.contract.address,
+          nftList.id.tokenId
+        );
+        await tx.wait();
+      }
+    } else {
+      loadDetails(TBAaddress, "opt-sepolia");
     }
   };
 
@@ -237,7 +309,8 @@ const NftPage = () => {
               className="nftpage_container_right_header_left"
               onClick={copyToClipboard}
             >
-              {TBAaddress}
+              {TBAaddress?.slice(0, 7)}...
+              {TBAaddress?.slice(TBAaddress.length - 5, TBAaddress.length)}
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -282,14 +355,14 @@ const NftPage = () => {
               {/* Depoly on sepolia */}
             </div>
             <div
-              onClick={() => handleClick("div2")}
+              onClick={() => handleClickBase()}
               className={selectedDiv === "div2" ? "selected" : "non-selected"}
             >
               {isBase ? "Base-sepolia" : "Depoly on base-sepolia"}
               {/* Depoly on base-sepolia */}
             </div>
             <div
-              onClick={() => handleClick("div3")}
+              onClick={() => handleClickOptimisum()}
               className={selectedDiv === "div3" ? "selected" : "non-selected"}
             >
               {isOptimism ? "op-sepolia" : "Depoly on op-sepolia"}
@@ -298,31 +371,37 @@ const NftPage = () => {
             </div>
           </div>
 
-          {selectedDiv && <DataDisplay data={divData[selectedDiv]} />}
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 700 }} aria-label="customized table">
-              <TableHead>
-                <TableRow>
-                  <StyledTableCell>From</StyledTableCell>
-                  <StyledTableCell align="left">To</StyledTableCell>
-                  <StyledTableCell align="left">Value</StyledTableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {detail.map((row) => (
-                  <StyledTableRow key={row.name}>
-                    <StyledTableCell component="th" scope="row">
-                      {row?.from?.slice(0, 10)}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">
-                      {row?.to?.slice(0, 10)}
-                    </StyledTableCell>
-                    <StyledTableCell align="left">{row?.value}</StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          {/* {selectedDiv && <DataDisplay data={divData[selectedDiv]} />} */}
+          {!nftList.length ? (
+            "No transaction has executed yet."
+          ) : (
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>From</StyledTableCell>
+                    <StyledTableCell align="left">To</StyledTableCell>
+                    <StyledTableCell align="left">Value</StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {detail.map((row) => (
+                    <StyledTableRow key={row.name}>
+                      <StyledTableCell component="th" scope="row">
+                        {row?.from?.slice(0, 10)}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.to?.slice(0, 10)}
+                      </StyledTableCell>
+                      <StyledTableCell align="left">
+                        {row?.value}
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
         </div>
       </div>
     </>
