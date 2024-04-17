@@ -114,6 +114,7 @@ io.on("connection", (socket) => {
 
 
   shares=removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
+  console.log(shares);
 
   if(shares.length>MIN_NO_NODES_REQUIRED){
         
@@ -129,7 +130,7 @@ io.on("connection", (socket) => {
     
     console.log(NFTowner);
 
-    const contract=new ethers.Contract("0xdE61e5145843bAaE74D787d638a6aBB53ff9cD3e",registryABI,wallet);
+    const contract=new ethers.Contract("0xA68736d237e5bD7fF2785B823EbA37ffE8E2DB82",registryABI,wallet);
     
 
       const accountAddress=await contract.account(sourceid,tokenaddress,tokenid,NFTowner,555);
@@ -195,6 +196,7 @@ io.on("connection", (socket) => {
       NodeIndex,
   }=data
 
+  let uint8Array = new Uint8Array(thresholdKey);
   let mapkey={
     accountAddress,
       sourceid,
@@ -202,7 +204,7 @@ io.on("connection", (socket) => {
       newowner,
   }
   const mapvalue={
-    thresholdKey,
+    thresholdKey:uint8Array,
     NodeIndex
   }
 
@@ -219,6 +221,7 @@ io.on("connection", (socket) => {
 
   
   shares=removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
+  console.log(shares);
 
   if(shares.length>MIN_NO_NODES_REQUIRED){
         
@@ -234,12 +237,15 @@ io.on("connection", (socket) => {
    
 
     const contract=new ethers.Contract(accountAddress,Accountabi,wallet);
-    await contract.changeOwner(newowner);
+    const tx=await contract.changeOwner(newowner);
+
+    console.log('Transfered loading');
+    await tx.wait()
 
     console.log('Transfered Sucessfully');
 
     }catch(e){
-      console.log(e);
+      // console.log(e);
     }
   }
 

@@ -17,12 +17,14 @@ const runVerifyNode = async () => {
   // let NodeIndex = prompt("Enter the index of Node: ");
   // NodeIndex = Number(NodeIndex);
   const NodeIndex = process.env.Node_Index;
+  // console.log(NodeIndex);
   const thresholdKey = await getsharedkey(
     NodeIndex,
     TOTAL_NODES,
     MIN_NO_NODES_REQUIRED
   );
-
+  // console.log(thresholdKey);
+  
   // Initialize contract address and ABI
   const RelayercontractAddress = "0xF1AD184b28574Ee5acC065251ef36726192a8836";
 
@@ -138,7 +140,7 @@ const runVerifyNode = async () => {
 
   const accounts = await axios.get("http://localhost:3000/account");
   const Tokens = accounts.data;
-  console.log(Tokens);
+  // console.log(Tokens);
 
   Tokens.map((token) => {
     const provider = getProvider(Number(token.source));
@@ -149,14 +151,14 @@ const runVerifyNode = async () => {
     contract.on("Transfer", (from, to, tokenindex) => {
       if (tokenindex == token.tokenId) {
         const data = {
-          accountAddress: token.account,
+          accountAddress: token.address,
           sourceid: token.source,
           destinationid: token.destination,
           newowner: to,
           thresholdKey,
           NodeIndex,
         };
-        console.log(`Transfer of owner of Account :${token.account} detucted`);
+        console.log(`Transfer of owner of Account :${token.address} detucted`);
         socket.emit("Transfer", data);
       }
     });
