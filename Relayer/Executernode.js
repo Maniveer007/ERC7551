@@ -1,15 +1,14 @@
-const { Server } =require( "socket.io");
-const express =require( "express");
-const cors =require( "cors");
-const { createServer } =require( "http");
-const getProvider =require( "./utils/getProvider");
-const shamir = require('shamir-secret-sharing');
-const ethers = require('ethers')
+const { Server } = require("socket.io");
+const express = require("express");
+const cors = require("cors");
+const { createServer } = require("http");
+const getProvider = require("./utils/getProvider");
+const shamir = require("shamir-secret-sharing");
+const ethers = require("ethers");
 const registryABI = require("./utils/registryABI");
-const Accountabi=require('./utils/Accountabi')
+const Accountabi = require("./utils/Accountabi");
 const getOwnerofNFT = require("./utils/getOwnerofNFT");
-const axios = require('axios');
-
+const axios = require("axios");
 
 const port = 5000;
 const app = express();
@@ -21,54 +20,53 @@ const io = new Server(server, {
 });
 app.use(cors());
 
-const TOTAL_NODES=5;
-const MIN_NO_NODES_REQUIRED=3;
+const TOTAL_NODES = 5;
+const MIN_NO_NODES_REQUIRED = 3;
 
 let map = new Map();
 
 function getthresholdkey(arr) {
- 
-  return arr.map(val=>{
+  return arr.map((val) => {
     return val.thresholdKey;
-  })
+  });
 }
 
 function removeDuplicateUint8Arrays(arrays) {
   const set = new Set();
 
   return arrays.filter((array) => {
-      const stringRepresentation = array.toString();
-      if (set.has(stringRepresentation)) {
-          return false; // Duplicate found
-      }
-      set.add(stringRepresentation);
-      return true; // Unique array
+    const stringRepresentation = array.toString();
+    if (set.has(stringRepresentation)) {
+      return false; // Duplicate found
+    }
+    set.add(stringRepresentation);
+    return true; // Unique array
   });
 }
 
 io.on("connection", (socket) => {
   console.log(socket.id);
 
-
   //post data in node
-  const postDataNode = async ()=>{
+  const postDataNode = async () => {
     try {
-      const postDataInbackend={
-        socketId:socket.id,
+      const postDataInbackend = {
+        socketId: socket.id,
         // nodeIndex:NodeIndex
-      }
-      const res=await axios.post('http://localhost:3000/node/',postDataInbackend);
-      console.log('data in postDataNode',res.data);
+      };
+      const res = await axios.post(
+        "https://erc7551-38pf.onrender.com/node/",
+        postDataInbackend
+      );
+      console.log("data in postDataNode", res.data);
     } catch (error) {
-      console.log('error in postDataNode',error);
+      console.log("error in postDataNode", error);
     }
-  }
+  };
 
   postDataNode();
 
-
   socket.on("CreateAccount", async (data) => {
-
     const {
       sourceid,
       destinationid,
@@ -79,7 +77,6 @@ io.on("connection", (socket) => {
       NodeIndex,
     } = data;
 
-
     let uint8Array = new Uint8Array(thresholdKey);
 
     let mapkey = {
@@ -87,106 +84,113 @@ io.on("connection", (socket) => {
       destinationid,
       owneradderss,
       tokenaddress,
-      tokenid
+      tokenid,
     };
 
     const mapvalue = {
       thresholdKey: uint8Array,
       NodeIndex: NodeIndex,
     };
-    
-    mapkey=JSON.stringify(mapkey);
+
+    mapkey = JSON.stringify(mapkey);
 
     if (map.has(mapkey)) {
       console.log("updating");
-      map.get(mapkey).push(mapvalue) // Retrieve the existing array directly
-     
+      map.get(mapkey).push(mapvalue); // Retrieve the existing array directly
     } else {
-      console.log('new data');
+      console.log("new data");
       map.set(mapkey, [mapvalue]);
     }
- 
 
+    shares = removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
+    console.log(shares);
 
+    if (shares.length > MIN_NO_NODES_REQUIRED) {
+      try {
+        const uint8arrprivatekey = await combineShares(shares);
 
+        const privateKey = uint8ArrayToHex(uint8arrprivatekey);
 
+        const provider = getProvider(destinationid);
+        const wallet = new ethers.Wallet(privateKey, provider);
+        const NFTowner = await getOwnerofNFT(sourceid, tokenaddress, tokenid);
 
+        console.log(NFTowner);
 
+        const contract = new ethers.Contract(
+          "0xA68736d237e5bD7fF2785B823EbA37ffE8E2DB82",
+          registryABI,
+          wallet
+        );
 
-  shares=removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
-  console.log(shares);
+        const accountAddress = await contract.account(
+          sourceid,
+          tokenaddress,
+          tokenid,
+          NFTowner,
+          555
+        );
+        const tx = await contract.createAccountOnlyRelayer(
+          sourceid,
+          tokenaddress,
+          tokenid,
+          NFTowner,
+          555
+        );
+        console.log("tx value", tx?.hash);
 
-  if(shares.length>MIN_NO_NODES_REQUIRED){
+        const postData = async () => {
+          try {
+            const data = {
+              txHash: tx?.hash,
+              method: "create Account",
+              source: sourceid,
+              destination: destinationid,
+            };
+            const res = await axios.post(
+              "https://erc7551-38pf.onrender.com/transactions/",
+              data
+            );
+            console.log("data in postdata", res.data);
+          } catch (error) {
+            console.log("error in postdata", error);
+          }
+        };
+
+        const postAccountDetail = async () => {
+          try {
+            const data = {
+              address: accountAddress,
+              source: sourceid,
+              destination: destinationid,
+              tokenAddress: tokenaddress,
+              tokenId: tokenid,
+            };
+            const res = await axios.post(
+              "https://erc7551-38pf.onrender.com/account/",
+              data
+            );
+            console.log("data in postAccountDetail", res.data);
+          } catch (error) {
+            console.log("error in postAccountDetail", error);
+          }
+        };
+
+        await tx.wait();
+        tx && postData();
+        tx && postAccountDetail();
+
+        console.log("executed sucessfully");
+
+        socket.emit("accountCreated");
         
-    try {
-    const uint8arrprivatekey=await combineShares(shares)
-
-
-    const privateKey=uint8ArrayToHex(uint8arrprivatekey);
-
-    const provider=getProvider(destinationid);
-    const wallet=new ethers.Wallet(privateKey,provider);
-    const NFTowner=await getOwnerofNFT(sourceid,tokenaddress,tokenid)
-    
-    console.log(NFTowner);
-
-    const contract=new ethers.Contract("0xA68736d237e5bD7fF2785B823EbA37ffE8E2DB82",registryABI,wallet);
-    
-
-      const accountAddress=await contract.account(sourceid,tokenaddress,tokenid,NFTowner,555);
-      const tx=await contract.createAccountOnlyRelayer(sourceid,tokenaddress,tokenid,NFTowner,555);
-      console.log('tx value',tx?.hash);
-
-      const postData = async ()=>{
-        try {
-          const data = {
-            txHash:tx?.hash,
-            method:"create Account",
-            source:sourceid,
-            destination:destinationid,
-          }
-          const res=await axios.post('http://localhost:3000/transactions/',data);
-          console.log('data in postdata',res.data);
-        } catch (error) {
-          console.log('error in postdata',error);
-        }
+      } catch (error) {
+        console.log("error in getting tx", error);
       }
-
-
-      const postAccountDetail = async ()=>{
-        try {
-          const data = {
-            address:accountAddress,
-            source:sourceid,
-            destination:destinationid,
-            tokenAddress:tokenaddress,
-            tokenId:tokenid
-          }
-          const res=await axios.post('http://localhost:3000/account/',data);
-          console.log('data in postAccountDetail',res.data);
-        } catch (error) {
-          console.log('error in postAccountDetail',error);
-        }
-      }
-      
-  
-  
-      await tx.wait();
-      tx&&postData();
-      tx&&postAccountDetail();
-  
-      console.log("executed sucessfully");
-  
-    } catch (error) {
-      console.log('error in getting tx',error);
     }
-
-  }
-
-    
   });
 
-  socket.on("Transfer",async(data)=>{
+  socket.on("Transfer", async (data) => {
     const {
       accountAddress,
       sourceid,
@@ -194,100 +198,91 @@ io.on("connection", (socket) => {
       newowner,
       thresholdKey,
       NodeIndex,
-  }=data
+    } = data;
 
-  let uint8Array = new Uint8Array(thresholdKey);
-  let mapkey={
-    accountAddress,
+    let uint8Array = new Uint8Array(thresholdKey);
+    let mapkey = {
+      accountAddress,
       sourceid,
       destinationid,
       newowner,
-  }
-  const mapvalue={
-    thresholdKey:uint8Array,
-    NodeIndex
-  }
+    };
+    const mapvalue = {
+      thresholdKey: uint8Array,
+      NodeIndex,
+    };
 
-  mapkey=JSON.stringify(mapkey);
+    mapkey = JSON.stringify(mapkey);
 
-  if (map.has(mapkey)) {
-    console.log("updating");
-    map.get(mapkey).push(mapvalue) // Retrieve the existing array directly
-   
-  } else {
-    console.log('new data');
-    map.set(mapkey, [mapvalue]);
-  }
-
-  
-  shares=removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
-  console.log(shares);
-
-  if(shares.length>MIN_NO_NODES_REQUIRED){
-        
-    try {
-      // console.log(removeDuplicates(getthresholdkey(map.get(mapkey))));
-    const uint8arrprivatekey=await combineShares(shares)
-
-
-    const privateKey=uint8ArrayToHex(uint8arrprivatekey);
-
-    const provider=getProvider(destinationid);
-    const wallet=new ethers.Wallet(privateKey,provider);
-   
-
-    const contract=new ethers.Contract(accountAddress,Accountabi,wallet);
-    const tx=await contract.changeOwner(newowner);
-
-    console.log('Transfered loading');
-    await tx.wait()
-
-    console.log('Transfered Sucessfully');
-
-    }catch(e){
-      // console.log(e);
+    if (map.has(mapkey)) {
+      console.log("updating");
+      map.get(mapkey).push(mapvalue); // Retrieve the existing array directly
+    } else {
+      console.log("new data");
+      map.set(mapkey, [mapvalue]);
     }
-  }
 
-  })
+    shares = removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
+    console.log(shares);
 
-
-
-
-
-  
-  socket.on('disconnect', () => {
-    console.log('User disconnected with ID:', socket.id);
-    io.emit('user disconnected', socket.id); // Emit user disconnected event with ID
-
-    const delDataNode = async ()=>{
+    if (shares.length > MIN_NO_NODES_REQUIRED) {
       try {
-        const res=await axios.delete(`http://localhost:3000/node/${socket.id}`);
-        console.log('del in postDataNode',res.data);
-      } catch (error) {
-        console.log('error in postDataNode',error);
+        // console.log(removeDuplicates(getthresholdkey(map.get(mapkey))));
+        const uint8arrprivatekey = await combineShares(shares);
+
+        const privateKey = uint8ArrayToHex(uint8arrprivatekey);
+
+        const provider = getProvider(destinationid);
+        const wallet = new ethers.Wallet(privateKey, provider);
+
+        const contract = new ethers.Contract(
+          accountAddress,
+          Accountabi,
+          wallet
+        );
+        const tx = await contract.changeOwner(newowner);
+
+        console.log("Transfered loading");
+        await tx.wait();
+
+        console.log("Transfered Sucessfully");
+      } catch (e) {
+        // console.log(e);
       }
     }
-
-    delDataNode();
-
-    
   });
 
+  socket.on("disconnect", () => {
+    console.log("User disconnected with ID:", socket.id);
+    io.emit("user disconnected", socket.id); // Emit user disconnected event with ID
 
+    const delDataNode = async () => {
+      try {
+        const res = await axios.delete(
+          `https://erc7551-38pf.onrender.com/node/${socket.id}`
+        );
+        console.log("del in postDataNode", res.data);
+      } catch (error) {
+        console.log("error in postDataNode", error);
+      }
+    };
+
+    delDataNode();
+  });
 });
 
-
-
 async function combineShares(shares) {
-    // Reconstruct the private key using Shamir's Secret Sharing
-    const privateKeyHex = await shamir.combine(shares);
+  // Reconstruct the private key using Shamir's Secret Sharing
+  const privateKeyHex = await shamir.combine(shares);
 
-    // Return the reconstructed private key
-    return privateKeyHex;
+  // Return the reconstructed private key
+  return privateKeyHex;
 }
 function uint8ArrayToHex(uint8Array) {
-  return uint8Array.reduce((str, byte) => str + byte.toString(16).padStart(2, '0'), '');
+  return uint8Array.reduce(
+    (str, byte) => str + byte.toString(16).padStart(2, "0"),
+    ""
+  );
 }
 
 server.listen(port, () => console.log(`server is running ${port}`));

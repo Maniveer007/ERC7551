@@ -1,6 +1,6 @@
 const io = require("socket.io-client");
 require("dotenv").config();
-const socket = io("http://localhost:5000/");
+const socket = io("https://erc7551-1.onrender.com/");
 const prompt = require("prompt-sync")({ sigint: true });
 const { getsharedkey } = require("./utils/getsharedkey");
 const relayerABI = require("./utils/relayerABI");
@@ -24,7 +24,7 @@ const runVerifyNode = async () => {
     MIN_NO_NODES_REQUIRED
   );
   // console.log(thresholdKey);
-  
+
   // Initialize contract address and ABI
   const RelayercontractAddress = "0xF1AD184b28574Ee5acC065251ef36726192a8836";
 
@@ -32,6 +32,7 @@ const runVerifyNode = async () => {
   // const Mumbaiprovider = new ethers.JsonRpcProvider(MumbaiproviderURL);
 
   const BasesepoliaproviderURL = `https://base-sepolia.g.alchemy.com/v2/${process.env.BASE_API_KEY}`;
+
   const Basesepoliaprovider = new ethers.JsonRpcProvider(
     BasesepoliaproviderURL
   );
@@ -42,7 +43,7 @@ const runVerifyNode = async () => {
   const SepoliaproviderURL = `https://eth-sepolia.g.alchemy.com/v2/${process.env.SEPOLIA_API_KEY}`;
   const Sepoliaprovider = new ethers.JsonRpcProvider(SepoliaproviderURL);
 
-  console.log(Sepoliaprovider);
+//   console.log(Sepoliaprovider);
 
   // const mumbaiRelayerContract = new ethers.Contract(RelayercontractAddress, relayerABI, Mumbaiprovider);
   const baseSepoliaRelayerContract = new ethers.Contract(
@@ -138,16 +139,53 @@ const runVerifyNode = async () => {
     }
   );
 
-  const accounts = await axios.get("http://localhost:3000/account");
-  const Tokens = accounts.data;
-  // console.log(Tokens);
+  try {
+    let accounts = await axios.get("https://erc7551-38pf.onrender.com/account");
+    //   let accountsLength = accounts?.length;
+    const Tokens = accounts.data;
 
-  Tokens.map((token) => {
+    Tokens.map((token) => {
+      const provider = getProvider(Number(token.source));
+      // console.log(token.tokenAddress);
+      const contract = new ethers.Contract(
+        token.tokenAddress,
+        ERCabi,
+        provider
+      );
+
+      // console.log("ywsgfyugyushgfiyeh");
+      contract.on("Transfer", (from, to, tokenindex) => {
+        if (tokenindex == token.tokenId) {
+          const data = {
+            accountAddress: token.address,
+            sourceid: token.source,
+            destinationid: token.destination,
+            newowner: to,
+            thresholdKey,
+            NodeIndex,
+          };
+          console.log(
+            `Transfer of owner of Account :${token.address} detucted`
+          );
+          socket.emit("Transfer", data);
+        }
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
+  // console.log(Tokens);
+};
+
+socket.on("accountCreated", async () => {
+  try {
+    accounts = await axios.get("https://erc7551-38pf.onrender.com/account");
+    // accounts = await axios.get("http://localhost:3000/account");
+    token = accounts[accounts.length - 1];
     const provider = getProvider(Number(token.source));
-    // console.log(token.tokenAddress);
+
     const contract = new ethers.Contract(token.tokenAddress, ERCabi, provider);
 
-    // console.log("ywsgfyugyushgfiyeh");
     contract.on("Transfer", (from, to, tokenindex) => {
       if (tokenindex == token.tokenId) {
         const data = {
@@ -162,8 +200,10 @@ const runVerifyNode = async () => {
         socket.emit("Transfer", data);
       }
     });
-  });
-};
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 socket.on("connect", () => {
   console.log("Socket connected");
