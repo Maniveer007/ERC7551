@@ -105,7 +105,7 @@ io.on("connection", (socket) => {
     shares = removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
     // console.log(shares);
 
-    if (shares.length > MIN_NO_NODES_REQUIRED) {
+    if (shares.length >= MIN_NO_NODES_REQUIRED) {
       try {
         const uint8arrprivatekey = await combineShares(shares);
 
