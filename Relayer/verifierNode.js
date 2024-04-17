@@ -10,13 +10,15 @@ const { default: axios } = require("axios");
 const getProvider = require("./utils/getProvider");
 const express = require('express');
 const http = require('http');
-
+const cors = require("cors");
 
 
 const PORT = process.env.PORT || 4000;
 
 const app = express();
 const server = http.createServer(app);
+
+app.use(cors());
 
 
 

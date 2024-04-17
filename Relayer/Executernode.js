@@ -103,7 +103,7 @@ io.on("connection", (socket) => {
     }
 
     shares = removeDuplicateUint8Arrays(getthresholdkey(map.get(mapkey)));
-    console.log(shares);
+    // console.log(shares);
 
     if (shares.length > MIN_NO_NODES_REQUIRED) {
       try {
@@ -128,14 +128,14 @@ io.on("connection", (socket) => {
           tokenaddress,
           tokenid,
           NFTowner,
-          555
+          0
         );
         const tx = await contract.createAccountOnlyRelayer(
           sourceid,
           tokenaddress,
           tokenid,
           NFTowner,
-          555
+          0
         );
         console.log("tx value", tx?.hash);
 

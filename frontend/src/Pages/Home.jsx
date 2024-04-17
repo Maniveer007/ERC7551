@@ -1,6 +1,7 @@
 import React from "react";
 import { useState } from "react";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -10,7 +11,10 @@ const Home = () => {
           <div class="font-sans font-semibold text-3xl text-center md:text-5xl">
             ERC 7551 token bounded account
           </div>
-          <div class="font-sans text-xl text-center md:text-2xl text-gradient-purple">
+          <div
+            className="font-sans text-xl text-center md:text-2xl"
+            style={{ color: "#65b5db" }}
+          >
             Unlocking potential for cross chain token bounded account.
           </div>
 
@@ -37,8 +41,11 @@ const Home = () => {
             <div className="md:w-[80%] pt-12 md:pt-0 px-4 md:px-0">
               <div className="hidden md:block">
                 <div className="text-2xl md:text-3xl font-sans font-semibold">
-                  ERC-7551 unlocks potential for cross chain token bounded
-                  account.
+                  ERC-7551 unlocks potential for
+                  <span style={{ color: "#65b5db" }}>
+                    {" "}
+                    cross chain token bounded account.
+                  </span>
                 </div>
                 {/* <div className="text-2xl md:text-3xl font-sans font-semibold">
                   life with
@@ -50,39 +57,37 @@ const Home = () => {
               <div className="md:hidden">
                 <div className="text-2xl md:text-3xl font-sans font-semibold">
                   ERC-7551 brings your NFTs to life with
-                  <span className="text-gradient-purple">
-                    token bound accounts
-                  </span>
+                  <span>token bound accounts</span>
                 </div>
               </div>
               <div className="flex items-center pt-6 space-x-4 md:pt-20">
                 <div className="text-xs font-mono text-zinc-400 py-4 uppercase w-fit whitespace-nowrap">
-                  with ERC-6551, your NFT can
+                  with ERC-7551, your NFT can
                 </div>
                 <div className="w-full h-0 border-t border-zinc-500"></div>
               </div>
               <div class="grid grid-cols-2 gap-4">
                 <div class="flex flex-col justify-center p-4 space-y-2 border border-white rounded-lg bg-zinc-50">
                   <div class="text-base font-mono uppercase text-gradient-purple">
-                    Own other Assets
+                    <span>Own Assets cross chain</span>
                   </div>
                   <div class="text-heading">Use your NFTs like a wallet</div>
                 </div>
                 <div class="flex flex-col justify-center p-4 space-y-2 border border-white rounded-lg bg-zinc-50">
                   <div class="text-base font-mono uppercase text-gradient-purple">
-                    MAKE ONCHAIN HISTORY
+                    <span>MAKE ONCHAIN HISTORY</span>
                   </div>
                   <div class="text-heading">Take actions with your NFT</div>
                 </div>
                 <div class="flex flex-col justify-center p-4 space-y-2 border border-white rounded-lg bg-zinc-50">
                   <div class="text-base font-mono uppercase text-gradient-purple">
-                    Connect WITH NFT
+                    <span>Create token bounded account</span>
                   </div>
                   <div class="text-heading">Use your NFT as an identity</div>
                 </div>
                 <div class="flex flex-col justify-center p-4 space-y-2 border border-white rounded-lg bg-zinc-50">
                   <div class="text-base font-mono uppercase text-gradient-purple">
-                    live cross-chain
+                    <span>live cross-chain</span>
                   </div>
                   <div class="text-heading">See your NFTs in action</div>
                 </div>
@@ -91,17 +96,20 @@ const Home = () => {
                 <div className="text-base font-sans text-zinc-600">
                   See your NFTs in action
                 </div>
-                <button
-                  class="inline-flex items-center justify-center font-bold rounded-md text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
-                  type="button"
-                  aria-haspopup="dialog"
-                  aria-expanded="false"
-                  aria-controls="radix-:R5aem9la:"
-                  data-state="closed"
-                  fdprocessedid="sw1m82"
-                >
-                  Get Started
-                </button>
+                <Link to="/nft">
+                  <button type="button" className="navbar_my_nft_button">
+                    Get started{" "}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                    >
+                      <path
+                        fill="#ffffff"
+                        d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-128-128c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-73.4 73.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l128-128z"
+                      />
+                    </svg>
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
