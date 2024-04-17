@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { NavLink, Link } from "react-router-dom";
 import "./navbar.css";
 import logo from "../assets/nftance.png";
+import { useEffect } from "react";
+import { ethers } from "ethers";
+
 // import {
 //   ConnectKitProvider,
 //   ConnectKitButton,
@@ -10,6 +13,20 @@ import logo from "../assets/nftance.png";
 // import logo from "../images/logo.png";
 
 const Navbar = () => {
+  const [address, setaddress] = useState("");
+
+  const loadAddress = async () => {
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
+    const add = await signer.getAddress();
+    setaddress(add);
+    console.log(add);
+  };
+
+  useEffect(() => {
+    loadAddress();
+  }, []);
+
   // const { walletAddress, signer, contract, instance } = useGlobalContext();
 
   return (
@@ -18,13 +35,22 @@ const Navbar = () => {
         <div className="gpt3__navbar-links_logo">
           <Link to="/">
             {/* <img src={logo}></img> */}
-            ERC 7551
+            <h2>
+              ERC <span>7551</span>
+            </h2>
           </Link>
         </div>
       </div>
 
       <div className="gpt3__navbar-sign">
-        {/* <button type="button">button </button> */}
+        <button type="button" className="navbar_my_nft_button_add">
+          {address
+            ? `${address?.slice(0, 6)}...${address?.slice(
+                address.length - 4,
+                address.length
+              )}`
+            : "Connect wallet"}
+        </button>
 
         <Link to="/nft">
           <button type="button" className="navbar_my_nft_button">

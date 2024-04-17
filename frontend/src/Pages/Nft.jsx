@@ -116,16 +116,22 @@ const Nft = () => {
         </div>
       </div>
       <div className="nft_container_lower">
-        {nftList?.map((k) => {
-          return (
-            <Card
-              name={k?.contractMetadata.name}
-              index={parseInt(k?.id.tokenId, 16)}
-              address={k?.contract.address}
-              img={k?.metadata.image}
-            />
-          );
-        })}
+        {!nftList.length ? (
+          "No NFTs"
+        ) : (
+          <>
+            {nftList?.map((k) => {
+              return (
+                <Card
+                  name={k?.contractMetadata.name}
+                  index={parseInt(k?.id.tokenId, 16)}
+                  address={k?.contract.address}
+                  img={k?.metadata.image}
+                />
+              );
+            })}
+          </>
+        )}
       </div>
     </div>
   );

@@ -198,12 +198,6 @@ const NftPage = () => {
     });
   }, []);
 
-  const divData = {
-    div1: "Data for Div 1",
-    div2: "Data for Div 2",
-    div3: "Data for Div 3",
-  };
-
   const handleClickBase = async () => {
     setSelectedDiv("div2");
     console.log(chainid);
@@ -289,7 +283,13 @@ const NftPage = () => {
     });
   };
 
-  const openSeaURL = `https://testnets.opensea.io/assets/sepolia/0xA1436b27e514DCD0ab633b9626FC730f5fbCCd2e/${address}/${index}`;
+  const openSeaURL = `https://testnets.opensea.io/assets/${
+    chainid == 84532
+      ? "base-sepolia"
+      : chainid == 11155420
+      ? "op-sepolia"
+      : "sepolia"
+  }/${address}/${index}`;
 
   return (
     <>
@@ -303,7 +303,7 @@ const NftPage = () => {
 
           <div className="nftpage_container_left_detail">
             <p>{nftList?.title}</p>
-            <a href={openSeaURL}>
+            <a href={openSeaURL} target="_blank" rel="noopener noreferrer">
               <img src="https://tokenbound.org/_next/image?url=%2Fopensea.svg&w=32&q=75"></img>
             </a>
           </div>
@@ -378,34 +378,76 @@ const NftPage = () => {
 
           {/* {selectedDiv && <DataDisplay data={divData[selectedDiv]} />} */}
           {!nftList.length ? (
-            "No transaction has executed yet."
+            <div className="no_tran">No transaction has executed yet.</div>
           ) : (
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 700 }} aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>From</StyledTableCell>
-                    <StyledTableCell align="left">To</StyledTableCell>
-                    <StyledTableCell align="left">Value</StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {detail.map((row) => (
-                    <StyledTableRow key={row.name}>
-                      <StyledTableCell component="th" scope="row">
-                        {row?.from?.slice(0, 10)}
-                      </StyledTableCell>
-                      <StyledTableCell align="left">
-                        {row?.to?.slice(0, 10)}
-                      </StyledTableCell>
-                      <StyledTableCell align="left">
-                        {row?.value}
-                      </StyledTableCell>
-                    </StyledTableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <div className="nftpage_tran_container">
+              {detail.map((k) => (
+                <div className="nftpage_div">
+                  <div className="right_div_first">
+                    <div className="nftpage_div_first_svg">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 512 512"
+                      >
+                        <path
+                          // fill="#ffffff"
+                          d="M64 32C28.7 32 0 60.7 0 96v64c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zm280 72a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm48 24a24 24 0 1 1 48 0 24 24 0 1 1 -48 0zM64 288c-35.3 0-64 28.7-64 64v64c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V352c0-35.3-28.7-64-64-64H64zm280 72a24 24 0 1 1 0 48 24 24 0 1 1 0-48zm56 24a24 24 0 1 1 48 0 24 24 0 1 1 -48 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p>
+                        From{" "}
+                        <span>
+                          {k?.from.slice(0, 4)}...
+                          {k?.from.slice(k?.from.length - 6, k?.from.length)}
+                        </span>
+                      </p>
+                      <p>Value {k?.value}</p>
+                    </div>
+                  </div>
+                  <div className="nftpage_div_second">
+                    <p>
+                      To{" "}
+                      <span>
+                        {k?.to.slice(0, 4)}...
+                        {k?.to.slice(k?.to.length - 6, k?.to.length)}
+                      </span>
+                    </p>
+                  </div>
+                  <div className="nftpage_div_third">
+                    Tx hash <span>{k?.hash.slice(0, 8)}...</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+            // <TableContainer component={Paper}>
+            //   <Table sx={{ minWidth: 700 }} aria-label="customized table">
+            //     <TableHead>
+            //       <TableRow>
+            //         <StyledTableCell>From</StyledTableCell>
+            //         <StyledTableCell align="left">To</StyledTableCell>
+            //         <StyledTableCell align="left">Value</StyledTableCell>
+            //       </TableRow>
+            //     </TableHead>
+            //     <TableBody>
+
+            // {detail.map((row) => (
+            //   <StyledTableRow key={row.name}>
+            //     <StyledTableCell component="th" scope="row">
+            //       {row?.from?.slice(0, 10)}
+            //     </StyledTableCell>
+            //     <StyledTableCell align="left">
+            //       {row?.to?.slice(0, 10)}
+            //     </StyledTableCell>
+            //     <StyledTableCell align="left">
+            //       {row?.value}
+            //     </StyledTableCell>
+            //   </StyledTableRow>
+            // ))}
+            // </TableBody>
+            // </Table>
+            // </TableContainer>
           )}
         </div>
       </div>
