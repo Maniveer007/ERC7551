@@ -1,6 +1,6 @@
 const io = require("socket.io-client");
 require("dotenv").config();
-const socket = io("https://erc7551-1.onrender.com/");
+const socket = io("https://erc7551-1.onrender.com/"); 
 const prompt = require("prompt-sync")({ sigint: true });
 const { getsharedkey } = require("./utils/getsharedkey");
 const relayerABI = require("./utils/relayerABI");
@@ -8,6 +8,18 @@ const ERCabi = require("./utils/ERC721TransferABI");
 const ethers = require("ethers");
 const { default: axios } = require("axios");
 const getProvider = require("./utils/getProvider");
+const express = require('express');
+const http = require('http');
+
+
+
+const PORT = process.env.PORT || 4000;
+
+const app = express();
+const server = http.createServer(app);
+
+
+
 
 const runVerifyNode = async () => {
   const TOTAL_NODES = 5;
@@ -210,3 +222,9 @@ socket.on("connect", () => {
 });
 
 runVerifyNode();
+
+
+
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
