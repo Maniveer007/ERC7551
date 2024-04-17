@@ -14,7 +14,7 @@ const getAccountDeployedStatus = async(currchainId,sourcechainId,tokenaddress,to
         url=`https://eth-sepolia.g.alchemy.com/v2/${"jqJjknACS9UffcaLTHqfE3kUwIVyOADc"}`
     }
     const provider=new ethers.JsonRpcProvider(url);
-    const contract=new ethers.Contract("0xdE61e5145843bAaE74D787d638a6aBB53ff9cD3e",abi,provider);
+    const contract=new ethers.Contract("0xA68736d237e5bD7fF2785B823EbA37ffE8E2DB82",abi,provider);
 
     
     

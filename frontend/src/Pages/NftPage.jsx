@@ -179,8 +179,8 @@ const NftPage = () => {
           fromBlock: "0x0",
           toBlock: "latest",
           category: ["external", "erc20", "erc721", "erc1155", "internal"],
-          fromAddress: "0xfddD2b8D9aaf04FA583CCF604a2De12668200582",
-          // fromAddress: TBAaddress,
+          // fromAddress: "0xfddD2b8D9aaf04FA583CCF604a2De12668200582",
+          fromAddress: address,
         },
       ],
     };
