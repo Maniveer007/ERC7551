@@ -15,9 +15,9 @@ contract Registry {
     address offrelayer;
 
 
-    constructor(){
-        onrelayer=IRelayer(0x913bABf454A57f72f7Adc03117379aE3d1194bCE);
-        offrelayer=0x9DCF58834F0e75Ffd72623cCf5447D01dd85Ba81;
+    constructor(address _onrelayer,address _offrelayer){
+        onrelayer=IRelayer(_onrelayer);
+        offrelayer=_offrelayer;
     }
 
 
