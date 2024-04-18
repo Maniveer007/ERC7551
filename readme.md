@@ -22,7 +22,7 @@ This limitation hinders the full potential of TBAs by preventing them from funct
 
 ## Solution 
 
-solution we resolve this problem by introducing a interoperability Relayer for creating crosschain
+Solution we resolve this problem by introducing a interoperability Relayer for creating crosschain TokenBounded account which creates Tokenbounded account on all chains with same address 
 
 ### Solution Overview
 
@@ -54,15 +54,12 @@ To address this issue, we propose the development of an interoperability relayer
 - we used CREATE2 to deploy all our registry contracts at same address 
 
 
+
+
 ## Detailed working of ERC7551 
 
 - when a user clicks on create account the the relayer emits an event 
 - verifiernodes keep tracking the relayer when ever relayer emits the event then the verifier sends the details of transaction to be executed and the threshold key of relayer 
 - executior node will decrypt key form the threshold key and executes account creation transaction 
 - verifiers will keep track of all the NFTs on source destination when ever the NFT is transfered to new owner the the relayer will change the ownership of Account to new owner 
-
-
-
-
-
 
