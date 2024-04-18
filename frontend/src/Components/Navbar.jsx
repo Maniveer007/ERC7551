@@ -18,7 +18,8 @@ const Navbar = () => {
   const loadAddress = async () => {
     const provider = new ethers.BrowserProvider(window.ethereum);
 
-    await provider.send("eth_requestAccounts", []);
+    const log= await provider.send("eth_requestAccounts", []);
+    console.log(log);
     const signer = await provider.getSigner();
     const add = await signer.getAddress();
     setaddress(add);
@@ -29,7 +30,7 @@ const Navbar = () => {
     loadAddress();
   }, []);
 
-  // const { walletAddress, signer, contract, instance } = useGlobalContext();
+
 
   return (
     <div className="gpt3__navbar">
@@ -45,7 +46,7 @@ const Navbar = () => {
       </div>
 
       <div className="gpt3__navbar-sign">
-        <button type="button" className="navbar_my_nft_button_add">
+        <button type="button" className="navbar_my_nft_button_add" onClick={loadAddress}>
           {address
             ? `${address?.slice(0, 6)}...${address?.slice(
                 address.length - 4,
