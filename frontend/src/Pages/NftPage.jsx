@@ -253,7 +253,7 @@ const NftPage = () => {
 
   const handleClickOptimisum = async () => {
     setSelectedDiv("div3");
-    if (!isBase) {
+    if (!isOptimism) {
       if (chainid == 11155420) {
         const tx = await Contract.createAccount(
           11155420,
