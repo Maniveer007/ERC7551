@@ -44,12 +44,6 @@ const Navbar = () => {
       </div>
 
       <div className="gpt3__navbar-sign">
-        <Link to="/executetran">
-          <button type="button" className="navbar_my_nft_button_add">
-            Execute transaction
-          </button>
-        </Link>
-
         <button
           type="button"
           className="navbar_my_nft_button_add"
