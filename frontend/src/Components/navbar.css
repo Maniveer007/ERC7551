@@ -136,6 +136,7 @@ a {
 .navbar_my_nft_button_add {
   background-color: black;
   font-size: 17px;
+  margin-left: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
