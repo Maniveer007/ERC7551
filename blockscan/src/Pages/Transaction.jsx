@@ -176,7 +176,7 @@ const Transaction = () => {
             Total transaction
           </div>
           <div className="transaction_container_lower_left_body">
-            {transaction?.map((k) => {
+            {transaction?.reverse().map((k) => {
               return (
                 <div className="transaction_div">
                   <div className="right_div_first transaction_div_first">
