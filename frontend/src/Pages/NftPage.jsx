@@ -194,7 +194,7 @@ const NftPage = () => {
 
   useEffect(() => {
     loadData().then(() => {
-      loadDetails(TBAaddress, "eth-sepolia");
+      TBAaddress&&loadDetails(TBAaddress, "eth-sepolia");
     });
   }, []);
 
@@ -221,7 +221,7 @@ const NftPage = () => {
         await tx.wait();
       }
     } else {
-      loadDetails(TBAaddress, "base-sepolia");
+      TBAaddress&&loadDetails(TBAaddress, "base-sepolia");
     }
   };
 
@@ -247,7 +247,7 @@ const NftPage = () => {
         await tx.wait();
       }
     } else {
-      loadDetails(TBAaddress, "eth-sepolia");
+      TBAaddress&&loadDetails(TBAaddress, "eth-sepolia");
     }
   };
 
@@ -272,7 +272,7 @@ const NftPage = () => {
         await tx.wait();
       }
     } else {
-      loadDetails(TBAaddress, "opt-sepolia");
+      TBAaddress&&loadDetails(TBAaddress, "opt-sepolia");
     }
   };
 
@@ -377,7 +377,7 @@ const NftPage = () => {
           </div>
 
           {/* {selectedDiv && <DataDisplay data={divData[selectedDiv]} />} */}
-          {!nftList.length ? (
+          {nftList.length===0 ? (
             <div className="no_tran">No transaction has executed yet.</div>
           ) : (
             <div className="nftpage_tran_container">
@@ -399,8 +399,8 @@ const NftPage = () => {
                       <p>
                         From{" "}
                         <span>
-                          {k?.from.slice(0, 4)}...
-                          {k?.from.slice(k?.from.length - 6, k?.from.length)}
+                          {k?.from?.slice(0, 4)}...
+                          {k?.from?.slice(k?.from?.length - 6, k?.from?.length)}
                         </span>
                       </p>
                       <p>Value {k?.value}</p>
@@ -410,8 +410,8 @@ const NftPage = () => {
                     <p>
                       To{" "}
                       <span>
-                        {k?.to.slice(0, 4)}...
-                        {k?.to.slice(k?.to.length - 6, k?.to.length)}
+                        {k?.to?.slice(0, 4)}...
+                        {k?.to?.slice(k?.to?.length - 6, k?.to?.length)}
                       </span>
                     </p>
                   </div>
