@@ -146,7 +146,7 @@ const Transaction = () => {
                       </svg>
                     </div>
                     <p>
-                      Address <span>{k?.address.slice(0, 10)}</span>
+                      Address <span>{k?.address.slice(0, 10)+"..."}</span>
                     </p>
                   </div>
                   <div className="transaction_div_second">
