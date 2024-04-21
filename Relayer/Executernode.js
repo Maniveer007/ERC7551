@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
         // nodeIndex:NodeIndex
       };
       const res = await axios.post(
-        "http://erc7551.deepak.codes/node/",
+        "https://erc7551-38pf.onrender.com/node/",
         postDataInbackend
       );
       console.log("a verifier node is added");
@@ -148,7 +148,7 @@ io.on("connection", (socket) => {
               destination: destinationid,
             };
             const res = await axios.post(
-              "http://erc7551.deepak.codes/transactions/",
+              "https://erc7551-38pf.onrender.com/transactions/",
               data
             );
             console.log("added transaction data to backend");
@@ -257,7 +257,7 @@ io.on("connection", (socket) => {
     const delDataNode = async () => {
       try {
         const res = await axios.delete(
-          `http://erc7551.deepak.codes/node/${socket.id}`
+          `https://erc7551-38pf.onrender.com/node/${socket.id}`
         );
         console.log("del in postDataNode", res.data);
       } catch (error) {
