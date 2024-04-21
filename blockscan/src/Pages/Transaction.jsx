@@ -8,19 +8,19 @@ const Transaction = () => {
   const [nodes, setNodes] = useState([]);
 
   const getAccount = async () => {
-    const res = await axios.get(`http://erc7551.deepak.codes/account/`);
+    const res = await axios.get(`https://erc7551-38pf.onrender.com/account/`);
     console.log(res.data);
     setAccount(res?.data);
   };
 
   const getActiveNode = async () => {
-    const res = await axios.get(`http://erc7551.deepak.codes/node/`);
+    const res = await axios.get(`https://erc7551-38pf.onrender.com/node/`);
     console.log(res.data);
     setNodes(res?.data);
   };
 
   const getTransaction = async () => {
-    const res = await axios.get(`http://erc7551.deepak.codes/transactions/`);
+    const res = await axios.get(`https://erc7551-38pf.onrender.com/transactions/`);
     console.log(res.data);
     setTransaction(res?.data);
   };
