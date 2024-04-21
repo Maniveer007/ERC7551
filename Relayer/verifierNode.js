@@ -155,7 +155,7 @@ const runVerifyNode = async () => {
 
 
   try {
-    let accounts = await axios.get("https://erc7551-38pf.onrender.com/account");
+    let accounts = await axios.get("http://erc7551.deepak.codes/account");
     //   let accountsLength = accounts?.length;
     const Tokens = accounts.data;
 
@@ -193,7 +193,7 @@ const runVerifyNode = async () => {
 
 socket.on("accountCreated", async () => {
   try {
-    accounts = await axios.get("https://erc7551-38pf.onrender.com/account");
+    accounts = await axios.get("http://erc7551.deepak.codes/account");
     // accounts = await axios.get("http://localhost:3000/account");
     token = accounts[accounts.length - 1];
     const provider = getProvider(Number(token.source));
