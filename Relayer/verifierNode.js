@@ -1,6 +1,6 @@
 const io = require("socket.io-client");
 require("dotenv").config();
-const socket = io("https://erc7551-1.onrender.com/"); 
+const socket = io("http://localhost:5000/"); 
 const prompt = require("prompt-sync")({ sigint: true });
 const { getsharedkey } = require("./utils/getsharedkey");
 const relayerABI = require("./utils/relayerABI");
@@ -153,6 +153,7 @@ const runVerifyNode = async () => {
     }
   );
 
+
   try {
     let accounts = await axios.get("https://erc7551-38pf.onrender.com/account");
     //   let accountsLength = accounts?.length;
@@ -167,12 +168,11 @@ const runVerifyNode = async () => {
         provider
       );
 
-      // console.log("ywsgfyugyushgfiyeh");
       contract.on("Transfer", (from, to, tokenindex) => {
         if (tokenindex == token.tokenId) {
           const data = {
             accountAddress: token.address,
-            sourceid: token.source,
+            sourceid: Number(token.source),
             destinationid: token.destination,
             newowner: to,
             thresholdKey,

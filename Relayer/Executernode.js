@@ -58,7 +58,7 @@ io.on("connection", (socket) => {
         "https://erc7551-38pf.onrender.com/node/",
         postDataInbackend
       );
-      console.log("data in postDataNode", res.data);
+      console.log("a verifier node is added");
     } catch (error) {
       console.log("error in postDataNode", error);
     }
@@ -151,7 +151,7 @@ io.on("connection", (socket) => {
               "https://erc7551-38pf.onrender.com/transactions/",
               data
             );
-            console.log("data in postdata", res.data);
+            console.log("added transaction data to backend");
           } catch (error) {
             console.log("error in postdata", error);
           }
@@ -170,7 +170,7 @@ io.on("connection", (socket) => {
               "https://erc7551-38pf.onrender.com/account/",
               data
             );
-            console.log("data in postAccountDetail", res.data);
+            console.log("added account details to backend");
           } catch (error) {
             console.log("error in postAccountDetail", error);
           }
@@ -185,7 +185,7 @@ io.on("connection", (socket) => {
         socket.emit("accountCreated");
         
       } catch (error) {
-        console.log("error in getting tx", error);
+        // console.log("error in getting tx", error);
       }
     }
   });
@@ -227,7 +227,6 @@ io.on("connection", (socket) => {
 
     if (shares.length > MIN_NO_NODES_REQUIRED) {
       try {
-        // console.log(removeDuplicates(getthresholdkey(map.get(mapkey))));
         const uint8arrprivatekey = await combineShares(shares);
 
         const privateKey = uint8ArrayToHex(uint8arrprivatekey);
@@ -244,7 +243,6 @@ io.on("connection", (socket) => {
 
         console.log("Transfered loading");
         await tx.wait();
-
         console.log("Transfered Sucessfully");
       } catch (e) {
         // console.log(e);
